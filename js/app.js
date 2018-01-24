@@ -1,14 +1,20 @@
 'use strict';
 
+var names = [];
+var votes = [];
 var oldItems = [];
 var newItems = [];
 Item.allItems = [];
+Item.totalClicks = 0;
 
 
-function Item(filepath, alt) {
+function Item(filepath, name) {
   this.filepath = filepath;
-  this.alt = alt;
+  this.name = name;
+  this.votes = 0;
+  this.timesDisplayed = 0;
   Item.allItems.push(this);
+  names.push(this.name);
 }
 
 new Item('img/bag.jpg','Bag');
@@ -36,16 +42,9 @@ var imgEl = document.getElementById('itemPics');
 var imgElOne = document.getElementById('itemPicOne');
 var imgElTwo = document.getElementById('itemPicTwo');
 var imgElThree = document.getElementById('itemPicThree');
+var ulEl = document.getElementById('results');
 
-imgEl.addEventListener('click', render);
-
-function render() {
-  newItems = [];
-  genOne();
-  genTwo();
-  genThree();
-  oldItems = newItems;
-}
+imgEl.addEventListener('click', handleclick);
 
 function randomItem() {
   var randomIndex = Math.floor(Math.random() * Item.allItems.length);
@@ -57,6 +56,8 @@ function genOne() {
   var isValid = compareItems(rOne, oldItems, newItems);
   if(isValid === false) {
     imgElOne.src = rOne.filepath;
+    imgElOne.alt = rOne.name;
+    rOne.timesDisplayed++;
     newItems.push(rOne);
   } else {
     genOne();
@@ -68,7 +69,9 @@ function genTwo() {
   var isValid = compareItems(rTwo, oldItems, newItems);
   if(isValid === false) {
     imgElTwo.src = rTwo.filepath;
+    imgElTwo.alt = rTwo.name;
     newItems.push(rTwo);
+    rTwo.timesDisplayed++;
   } else {
     genTwo();
   }
@@ -79,7 +82,9 @@ function genThree() {
   var isValid = compareItems(rThree, oldItems, newItems);
   if(isValid === false) {
     imgElThree.src = rThree.filepath;
+    imgElThree.alt = rThree.name;
     newItems.push(rThree);
+    rThree.timesDisplayed++;
   } else {
     genThree();
   }
@@ -97,6 +102,73 @@ function compareItems(randomItem, oldItems, newItems) {
     }
   }
   return false;
+}
+
+function handleclick(e) {
+  Item.totalClicks++;
+  for(var i in Item.allItems) {
+    if(e.target.alt === Item.allItems[i].name) {
+      Item.allItems[i].votes++;
+    }
+  }
+
+  if(Item.totalClicks > 25) {
+    imgEl.removeEventListener('click', handleclick);
+    showResults();
+    updateVotes();
+    renderChart();
+  } else {
+    render();
+  }
+}
+
+function showResults() {
+  for(var i in Item.allItems) {
+    var liEl = document.createElement('li');
+    liEl.textContent = Item.allItems[i].name + ' was voted ' + Item.allItems[i].votes + ' times and was displayed ' + Item.allItems[i].timesDisplayed + ' times.';
+    ulEl.appendChild(liEl);
+  }
+}
+
+function updateVotes(){
+  for(var i in Item.allItems) {
+    votes[i] = Item.allItems[i].votes;
+  }
+}
+
+function renderChart(){
+  var context = document.getElementById('chart').getContext('2d');
+
+  var chartColors = ['#cc65e'];
+
+  var itemChart = new Chart(context, {
+    type: 'bar',
+    data: {
+      labels: names,
+      datasets: [{
+        label: 'Votes Per Item',
+        data: votes,
+        backgroundColors: chartColors,
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  })
+}
+
+function render() {
+  newItems = [];
+  genOne();
+  genTwo();
+  genThree();
+  oldItems = newItems;
 }
 
 render();
