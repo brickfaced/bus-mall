@@ -1,6 +1,9 @@
-img {
+body {
   align-content: center;
+}
+
+img {
   display: inline-block;
-  width: 33%;
-  height: 10%;
+  height: 400px;
+  width: 400px;
 }
