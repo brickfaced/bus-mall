@@ -46,7 +46,6 @@ var imgEl = document.getElementById('itemPics');
 var imgElOne = document.getElementById('itemPicOne');
 var imgElTwo = document.getElementById('itemPicTwo');
 var imgElThree = document.getElementById('itemPicThree');
-var ulEl = document.getElementById('results');
 
 imgEl.addEventListener('click', handleclick);
 
@@ -119,7 +118,6 @@ function handleclick(e) {
   if(Item.totalClicks > 24) {
     imgEl.removeEventListener('click', handleclick);
     updateVotes();
-    // showResults();
     renderChart();
   } else {
     render();
@@ -138,7 +136,7 @@ function renderChart(){
 
   var chartColors = ['#cc65e'];
 
-  var itemChart = new Chart(context, {
+  var itemChart = new Chart(context, { // eslint-disable-line
     type: 'bar',
     data: {
       labels: names,
@@ -157,7 +155,7 @@ function renderChart(){
         }]
       }
     }
-  })
+  }) // eslint-disable-line
 }
 
 function render() {
