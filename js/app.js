@@ -7,6 +7,10 @@ var newItems = [];
 Item.allItems = [];
 Item.totalClicks = 0;
 
+if(localStorage.getItem('storedVotes')){
+  votes = JSON.parse(localStorage.getItem('storedVotes'));
+}
+
 
 function Item(filepath, name) {
   this.filepath = filepath;
@@ -112,27 +116,20 @@ function handleclick(e) {
     }
   }
 
-  if(Item.totalClicks > 25) {
+  if(Item.totalClicks > 24) {
     imgEl.removeEventListener('click', handleclick);
-    showResults();
     updateVotes();
+    // showResults();
     renderChart();
   } else {
     render();
   }
 }
 
-function showResults() {
-  for(var i in Item.allItems) {
-    var liEl = document.createElement('li');
-    liEl.textContent = Item.allItems[i].name + ' was voted ' + Item.allItems[i].votes + ' times and was displayed ' + Item.allItems[i].timesDisplayed + ' times.';
-    ulEl.appendChild(liEl);
-  }
-}
-
 function updateVotes(){
   for(var i in Item.allItems) {
-    votes[i] = Item.allItems[i].votes;
+    votes[i] += Item.allItems[i].votes;
+    localStorage.setItem('storedVotes',JSON.stringify(votes));
   }
 }
 
