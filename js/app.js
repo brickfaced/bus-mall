@@ -9,6 +9,11 @@ Item.totalClicks = 0;
 
 if(localStorage.getItem('storedVotes')){
   votes = JSON.parse(localStorage.getItem('storedVotes'));
+} else {
+  for(var i = 0; i < 24; i++){
+    votes.push(0);
+  }
+  localStorage.setItem('storedVotes',JSON.stringify(votes));
 }
 
 
@@ -127,8 +132,8 @@ function handleclick(e) {
 function updateVotes(){
   for(var i in Item.allItems) {
     votes[i] += Item.allItems[i].votes;
-    localStorage.setItem('storedVotes',JSON.stringify(votes));
   }
+  localStorage.setItem('storedVotes',JSON.stringify(votes));
 }
 
 function renderChart(){
